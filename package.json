@@ -18,6 +18,7 @@
   "dependencies": {
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
+    "@hookform/resolvers": "^3.8.0",
     "@jsonforms/core": "^3.3.0",
     "@jsonforms/material-renderers": "^3.3.0",
     "@jsonforms/react": "^3.3.0",
@@ -35,12 +36,14 @@
     "next": "14.2.4",
     "react": "^18",
     "react-dom": "^18",
+    "react-hook-form": "^7.52.1",
     "swr": "^2.2.5",
     "uniforms": "^4.0.0-alpha.0",
     "uniforms-bootstrap4": "^4.0.0-alpha.0",
     "uniforms-bridge-json-schema": "^4.0.0-alpha.0",
     "uniforms-mui": "^4.0.0-alpha.5",
-    "uniforms-semantic": "^4.0.0-alpha.0"
+    "uniforms-semantic": "^4.0.0-alpha.0",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
     "@types/node": "^20",

@@ -13,12 +13,23 @@ export const jsonSchemaFormSchema = (countries) => {
                firstName: {
                   type: "string",
                   title: "First Name",
-                  maxLength: 10,
+                  minLength: 3,
+                  maxLength: 20,
                },
-               lastName: { type: "string", title: "Last Name" },
-               age: { type: "number", title: "Age", minimum: 18 },
+               lastName: {
+                  type: "string",
+                  title: "Last Name",
+                  minLength: 3,
+                  maxLength: 20,
+               },
+               age: { type: "number", title: "Age", minimum: 18, maximum: 115 },
+               birthDate: {
+                  title: "Birth Date",
+                  type: "string",
+                  format: "date",
+               },
             },
-            required: ["firstName", "lastName"],
+            required: ["firstName", "lastName", "birthDate"],
          },
          contactInfo: {
             type: "object",
@@ -88,6 +99,13 @@ export const jsonSchemaFormUiSchema = {
             showErrors: true,
          },
       },
+      birthDate: {
+         "ui:widget": "date",
+         "ui:options": {
+            inputType: "date",
+            showErrors: true,
+         },
+      },
    },
    contactInfo: {
       email: {
@@ -118,4 +136,21 @@ export const jsonSchemaFormUiSchema = {
          },
       },
    },
+};
+
+export const transformErrors = (errors) => {
+   return errors.map((error) => {
+      if (error.name === "maxLength") {
+         error.message =
+            "Must be less than " + error?.params.limit + " characters";
+      }
+      if (error.name === "minLength") {
+         error.message =
+            "Must be more than " + error?.params.limit + " characters";
+      }
+      if (error.name === "required") {
+         error.message = "Field is required*";
+      }
+      return error;
+   });
 };
