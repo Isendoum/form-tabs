@@ -1,3 +1,33 @@
 {
-  "extends": "next/core-web-vitals"
+  "env": { "browser": true, "es2020": true, "es6": true, "node": true },
+  "extends": ["next/core-web-vitals", "eslint:recommended","prettier"],
+  "plugins": ["@typescript-eslint", "prettier"],
+  "ignorePatterns": ["node_modules/**/*"],
+  "rules":{
+    "prettier/prettier": "error",
+    "no-duplicate-imports":["error"],
+    "react-hooks/exhaustive-deps": "off",
+    "brace-style": ["error", "1tbs", { "allowSingleLine": false }],
+    "@typescript-eslint/no-unused-vars": ["warn"],
+    "@typescript-eslint/no-explicit-any": ["warn"],
+    "no-unused-vars": "error",
+    "semi": [1, "always"],
+    "space-unary-ops": 2,
+    "space-infix-ops": "error",
+    "object-curly-spacing": ["error", "always"],
+    "arrow-spacing": ["error", { "before": true, "after": true }],
+    "unused-imports/no-unused-imports-ts": 0,
+    "linebreak-style": ["warn", "unix"],
+    "quotes": ["warn", "double"],
+    "max-len": ["warn", 270],
+    "no-trailing-spaces": [2],
+    "no-var":"warn",
+    "no-multiple-empty-lines": [
+      "warn",
+      {
+        "max": 1,
+        "maxEOF": 0
+      }
+    ]
+  }
 }
