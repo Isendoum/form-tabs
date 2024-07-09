@@ -1,6 +1,7 @@
 import Form from "@rjsf/mui";
 import validator from "@rjsf/validator-ajv8";
-import AutocompleteWidget from "@/components/widgets/AutocompleteWidget";
+
+import DynamicSelectWidget from "../widgets/DynamicSelectWidget";
 
 const JsonSchemaForm = ({ schema, schemaUi, onSubmit, transformErrors }) => {
    return (
@@ -16,7 +17,7 @@ const JsonSchemaForm = ({ schema, schemaUi, onSubmit, transformErrors }) => {
             liveValidate
             showErrorList={false}
             // noHtml5Validate
-            widgets={{ AutocompleteWidget }}
+            widgets={{ DynamicSelectWidget }}
          />
       </div>
    );

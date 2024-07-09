@@ -6,5 +6,5 @@ export async function GET(req, res) {
       { name: "Mexico" },
       // Add more countries as needed
    ];
-   return NextResponse.json({ countries });
+   return NextResponse.json(countries);
 }

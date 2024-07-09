@@ -114,6 +114,21 @@ export const formSchema = {
                         { value: "black", label: "Black" },
                      ],
                   },
+                  {
+                     name: "city",
+                     label: "City",
+                     type: "server-autocomplete",
+                     fetchOptions: async (input) => {
+                        const response = await fetch(
+                           `/api/cities?query=${input}`,
+                        );
+                        const data = await response.json();
+                        return data.cities.map((city) => ({
+                           label: city.name,
+                           value: city.id,
+                        }));
+                     },
+                  },
                ],
             },
          ],
@@ -152,4 +167,5 @@ export const validationSchema = Yup.object().shape({
    profilePicture: Yup.mixed().required("A file is required"),
    gender: Yup.string().required("This field is required"),
    favoriteColor: Yup.string().required("This field is required"),
+   city: Yup.string().required("This field is required"),
 });

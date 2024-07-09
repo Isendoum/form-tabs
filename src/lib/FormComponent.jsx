@@ -21,6 +21,7 @@ import {
    Switch,
    Slider,
 } from "@mui/material";
+import ServerAutocomplete from "./components/ServerAutocomplete";
 
 const FormComponent = ({ schema, validationSchema, onSubmit }) => {
    const {
@@ -173,6 +174,15 @@ const FormComponent = ({ schema, validationSchema, onSubmit }) => {
                         helperText={errors[field.name]?.message}
                      />
                   )}
+               />
+            );
+         case "server-autocomplete":
+            return (
+               <ServerAutocomplete
+                  label={field.label}
+                  value={value}
+                  onChange={onChange}
+                  fetchOptions={field.fetchOptions}
                />
             );
          case "file":
