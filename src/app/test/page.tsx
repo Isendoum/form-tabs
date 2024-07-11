@@ -54,8 +54,8 @@ const Home = () => {
          <JsonSchemaForm
             transformErrors={transformErrors}
             onSubmit={handleSubmitJsonSchemaForm}
-            schema={smileFormSchema}
-            schemaUi={smileFormUiSchema}
+            schema={jsonSchemaFormSchema}
+            schemaUi={jsonSchemaFormUiSchema}
          />
       </div>
    );
