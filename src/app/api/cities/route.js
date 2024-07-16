@@ -23,5 +23,5 @@ export async function GET(req, res) {
       city.name.toLowerCase().includes(query.toLowerCase()),
    );
 
-   return NextResponse.json({ cities: filteredCities });
+   return NextResponse.json({ data: filteredCities });
 }

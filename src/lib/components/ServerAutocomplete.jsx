@@ -6,7 +6,15 @@ import {
    debounce,
 } from "@mui/material";
 
-const ServerAutocomplete = ({ label, value, onChange, fetchOptions }) => {
+const ServerAutocomplete = ({
+   label,
+   value,
+   onChange,
+   fetchOptions,
+   url,
+   optionValue,
+   optionLabel,
+}) => {
    const [inputValue, setInputValue] = useState("");
    const [options, setOptions] = useState([]);
    const [loading, setLoading] = useState(false);
@@ -14,8 +22,14 @@ const ServerAutocomplete = ({ label, value, onChange, fetchOptions }) => {
    const debouncedFetchOptions = useCallback(
       debounce(async (input) => {
          setLoading(true);
-         const response = await fetchOptions(input);
-         setOptions(response);
+         const res = await fetch(`${url}${input}`);
+         const data = await res.json();
+         const mappedData = data.data.map((obj) => ({
+            name: obj?.[optionLabel],
+            value: obj?.[optionValue],
+         }));
+         // const response = await fetchOptions(input);
+         setOptions(mappedData);
          setLoading(false);
       }, 300),
       [fetchOptions],
@@ -41,7 +55,7 @@ const ServerAutocomplete = ({ label, value, onChange, fetchOptions }) => {
             setInputValue(newInputValue);
          }}
          options={options}
-         getOptionLabel={(option) => option.label || ""}
+         getOptionLabel={(option) => option.name || ""}
          loading={loading}
          renderInput={(params) => (
             <TextField

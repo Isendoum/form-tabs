@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, FormProvider, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
    TextField,
@@ -22,25 +22,30 @@ import {
    Slider,
 } from "@mui/material";
 import ServerAutocomplete from "./components/ServerAutocomplete";
+import { generateValidationSchema } from "./utils/validation";
+import DynamicSelect from "./components/DynamicSelect";
 
-const FormComponent = ({ schema, validationSchema, onSubmit }) => {
+const FormComponent = ({ schema, onSubmit, initialValues }) => {
+   const validationSchema = generateValidationSchema(schema);
+   const methods = useForm({
+      defaultValues: initialValues,
+      resolver: yupResolver(validationSchema),
+   });
    const {
       control,
       handleSubmit,
       watch,
       formState: { errors },
-   } = useForm({
-      resolver: yupResolver(validationSchema),
-   });
+   } = methods;
    useEffect(() => {
       console.log("FormComponent rendered");
-   });
+   }, []);
 
    const watchFields = watch();
 
    const isFieldVisible = (field) => {
-      if (!field.dependencies) return true;
-      return field.dependencies.every(
+      if (!field.visibilityDependencies) return true;
+      return field.visibilityDependencies.some(
          (dep) => watchFields[dep.field] === dep.value,
       );
    };
@@ -80,23 +85,42 @@ const FormComponent = ({ schema, validationSchema, onSubmit }) => {
                />
             );
          case "select":
-            return (
-               <FormControl
-                  variant="outlined"
-                  fullWidth
-                  error={!!errors[field.name]}
-               >
-                  <InputLabel>{field.label}</InputLabel>
-                  <Select value={value} onChange={onChange} label={field.label}>
-                     {field.options.map((option, index) => (
-                        <MenuItem key={index} value={option.value}>
-                           {option.label}
-                        </MenuItem>
-                     ))}
-                  </Select>
-                  <FormHelperText>{errors[field.name]?.message}</FormHelperText>
-               </FormControl>
-            );
+            if (field.dynamicOptions) {
+               return (
+                  <DynamicSelect
+                     name={field.name}
+                     label={field.label}
+                     dependency={field.dynamicOptions.dependency}
+                     url={field.dynamicOptions.url}
+                     validation={field.validation}
+                     initialValue={initialValues[field.name]}
+                  />
+               );
+            } else {
+               return (
+                  <FormControl
+                     variant="outlined"
+                     fullWidth
+                     error={!!errors[field.name]}
+                  >
+                     <InputLabel>{field.label}</InputLabel>
+                     <Select
+                        value={value}
+                        onChange={onChange}
+                        label={field.label}
+                     >
+                        {field.options.map((option, index) => (
+                           <MenuItem key={index} value={option.value}>
+                              {option.label}
+                           </MenuItem>
+                        ))}
+                     </Select>
+                     <FormHelperText>
+                        {errors[field.name]?.message}
+                     </FormHelperText>
+                  </FormControl>
+               );
+            }
          case "checkbox":
             return (
                <FormControlLabel
@@ -179,8 +203,11 @@ const FormComponent = ({ schema, validationSchema, onSubmit }) => {
          case "server-autocomplete":
             return (
                <ServerAutocomplete
+                  optionValue={field.optionValue}
+                  optionLabel={field.optionLabel}
                   label={field.label}
                   value={value}
+                  url={field.url}
                   onChange={onChange}
                   fetchOptions={field.fetchOptions}
                />
@@ -251,37 +278,40 @@ const FormComponent = ({ schema, validationSchema, onSubmit }) => {
    );
 
    return (
-      <form onSubmit={handleSubmit(onSubmit)}>
-         {schema.fields && schema.fields.length > 0 && (
-            <Grid container spacing={2}>
-               {schema.fields.map((field, index) => (
-                  <Grid item xs={12} key={index}>
-                     <Controller
-                        name={field.name}
-                        control={control}
-                        defaultValue={
-                           field.type === "checkbox" || field.type === "switch"
-                              ? false
-                              : ""
-                        }
-                        render={({ field: { onChange, value } }) =>
-                           renderInput(field, onChange, value)
-                        }
-                     />
-                  </Grid>
-               ))}
+      <FormProvider {...methods}>
+         <form onSubmit={handleSubmit(onSubmit)}>
+            {schema.fields && schema.fields.length > 0 && (
+               <Grid container spacing={2}>
+                  {schema.fields.map((field, index) => (
+                     <Grid item xs={12} key={index}>
+                        <Controller
+                           name={field.name}
+                           control={control}
+                           defaultValue={
+                              field.type === "checkbox" ||
+                              field.type === "switch"
+                                 ? false
+                                 : ""
+                           }
+                           render={({ field: { onChange, value } }) =>
+                              renderInput(field, onChange, value)
+                           }
+                        />
+                     </Grid>
+                  ))}
+               </Grid>
+            )}
+
+            {schema?.sections &&
+               schema?.sections.map((section) => renderSection(section))}
+
+            <Grid item xs={12}>
+               <Button type="submit" variant="contained" color="primary">
+                  Submit
+               </Button>
             </Grid>
-         )}
-
-         {schema.sections &&
-            schema.sections.map((section) => renderSection(section))}
-
-         <Grid item xs={12}>
-            <Button type="submit" variant="contained" color="primary">
-               Submit
-            </Button>
-         </Grid>
-      </form>
+         </form>
+      </FormProvider>
    );
 };
 
