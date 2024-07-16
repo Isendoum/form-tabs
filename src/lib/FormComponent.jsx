@@ -321,7 +321,7 @@ const FormComponent = ({ schema, onSubmit, initialValues }) => {
             {schema?.sections &&
                schema?.sections.map((section) => renderSection(section))}
 
-            <Grid item xs={12}>
+            <Grid item xs={12} className="mt-4 float-right">
                <Button type="submit" variant="contained" color="primary">
                   Submit
                </Button>
