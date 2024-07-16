@@ -123,17 +123,27 @@ const FormComponent = ({ schema, onSubmit, initialValues }) => {
             }
          case "checkbox":
             return (
-               <FormControlLabel
-                  control={<Checkbox checked={value} onChange={onChange} />}
-                  label={field.label}
-               />
+               <div>
+                  <FormControlLabel
+                     control={<Checkbox checked={value} onChange={onChange} />}
+                     label={field.label}
+                  />
+                  <FormHelperText className="text-red-500">
+                     {errors[field.name]?.message}
+                  </FormHelperText>
+               </div>
             );
          case "switch":
             return (
-               <FormControlLabel
-                  control={<Switch checked={value} onChange={onChange} />}
-                  label={field.label}
-               />
+               <div>
+                  <FormControlLabel
+                     control={<Switch checked={value} onChange={onChange} />}
+                     label={field.label}
+                  />
+                  <FormHelperText className="text-red-500">
+                     {errors[field.name]?.message}
+                  </FormHelperText>
+               </div>
             );
          case "slider":
             return (
@@ -239,27 +249,30 @@ const FormComponent = ({ schema, onSubmit, initialValues }) => {
             spacing={2}
             direction={orientation === "horizontal" ? "row" : "column"}
          >
-            {row.fields.map((field, index) => (
-               <Grid
-                  item
-                  xs={12}
-                  sm={orientation === "horizontal" ? columnWidth : 12}
-                  key={index}
-               >
-                  <Controller
-                     name={field.name}
-                     control={control}
-                     defaultValue={
-                        field.type === "checkbox" || field.type === "switch"
-                           ? false
-                           : ""
-                     }
-                     render={({ field: { onChange, value } }) =>
-                        renderInput(field, onChange, value)
-                     }
-                  />
-               </Grid>
-            ))}
+            {row.fields.map((field, index) => {
+               if (!isFieldVisible(field)) return null; // Conditionally render the entire Grid item
+               return (
+                  <Grid
+                     item
+                     xs={12}
+                     sm={orientation === "horizontal" ? columnWidth : 12}
+                     key={index}
+                  >
+                     <Controller
+                        name={field.name}
+                        control={control}
+                        defaultValue={
+                           field.type === "checkbox" || field.type === "switch"
+                              ? false
+                              : ""
+                        }
+                        render={({ field: { onChange, value } }) =>
+                           renderInput(field, onChange, value)
+                        }
+                     />
+                  </Grid>
+               );
+            })}
          </Grid>
       );
    };
@@ -282,23 +295,26 @@ const FormComponent = ({ schema, onSubmit, initialValues }) => {
          <form onSubmit={handleSubmit(onSubmit)}>
             {schema.fields && schema.fields.length > 0 && (
                <Grid container spacing={2}>
-                  {schema.fields.map((field, index) => (
-                     <Grid item xs={12} key={index}>
-                        <Controller
-                           name={field.name}
-                           control={control}
-                           defaultValue={
-                              field.type === "checkbox" ||
-                              field.type === "switch"
-                                 ? false
-                                 : ""
-                           }
-                           render={({ field: { onChange, value } }) =>
-                              renderInput(field, onChange, value)
-                           }
-                        />
-                     </Grid>
-                  ))}
+                  {schema.fields.map((field, index) => {
+                     if (!isFieldVisible(field)) return null; // Conditionally render the entire Grid item
+                     return (
+                        <Grid item xs={12} key={index}>
+                           <Controller
+                              name={field.name}
+                              control={control}
+                              defaultValue={
+                                 field.type === "checkbox" ||
+                                 field.type === "switch"
+                                    ? false
+                                    : ""
+                              }
+                              render={({ field: { onChange, value } }) =>
+                                 renderInput(field, onChange, value)
+                              }
+                           />
+                        </Grid>
+                     );
+                  })}
                </Grid>
             )}
 

@@ -28,7 +28,6 @@ const ServerAutocomplete = ({
             name: obj?.[optionLabel],
             value: obj?.[optionValue],
          }));
-         // const response = await fetchOptions(input);
          setOptions(mappedData);
          setLoading(false);
       }, 300),

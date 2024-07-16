@@ -59,24 +59,39 @@ export const formSchema = {
                      name: "country",
                      label: "Country",
                      type: "select",
-                     options: [
-                        { value: "usa", label: "USA" },
-                        { value: "canada", label: "Canada" },
-                        { value: "other", label: "Other" },
-                     ],
+                     dynamicOptions: {
+                        url: "/api/countries",
+                     },
                      required: true,
                      validation: Yup.string().required("Country is required"),
                   },
                   {
                      name: "state",
                      label: "State",
-                     type: "text",
+                     type: "select",
+                     dynamicOptions: {
+                        dependency: "country",
+                        url: "/api/states?country=:value",
+                     },
                      required: true,
-                     dependencies: [{ field: "country", value: "usa" }],
+                     visibilityDependencies: [
+                        { field: "country", value: 1 },
+                        { field: "country", value: 2 },
+                     ],
                      validation: Yup.string().when("country", {
-                        is: "usa",
-                        then: Yup.string().required("State is required"),
+                        is: (value) => value === "1" || value === "2",
+                        then: (schema) => schema.required("State is required"),
+                        otherwise: (schema) => schema.optional(),
                      }),
+                  },
+                  {
+                     name: "city",
+                     label: "City",
+                     type: "server-autocomplete",
+                     url: "/api/cities?query=",
+                     optionValue: "id",
+                     optionLabel: "name",
+                     // validation: Yup.string().required("City is required"),
                   },
                ],
             },
@@ -170,54 +185,9 @@ export const formSchema = {
                         "Favorite color is required",
                      ),
                   },
-                  {
-                     name: "city",
-                     label: "City",
-                     type: "server-autocomplete",
-                     url: "/api/cities?query=",
-                     optionValue: "id",
-                     optionLabel: "name",
-                     // validation: Yup.string().required("City is required"),
-                  },
                ],
             },
          ],
       },
    ],
 };
-
-export const validationSchema = Yup.object().shape({
-   firstName: Yup.string(),
-   lastName: Yup.string(),
-   email: Yup.string()
-      .email("Invalid email format")
-      .required("This field is required"),
-   age: Yup.number()
-      .typeError("Must be a number")
-      .required("This field is required"),
-   password: Yup.string().required("This field is required"),
-   country: Yup.string().required("This field is required"),
-   state: Yup.string().when("country", {
-      is: "usa",
-      then: (schema) => schema.required("This field is required"),
-      otherwise: (schema) => schema,
-   }),
-   subscribe: Yup.boolean(),
-   dob: Yup.date()
-      .typeError("Invalid date")
-      .nullable()
-      .required("This field is required"),
-   bio: Yup.string(),
-   terms: Yup.boolean()
-      .oneOf([true], "You must accept the terms")
-      .required("This field is required"),
-   satisfaction: Yup.number()
-      .typeError("Must be a number")
-      .min(0, "Minimum value is 0")
-      .max(100, "Maximum value is 100")
-      .required("This field is required"),
-   // profilePicture: Yup.mixed().required("A file is required"),
-   gender: Yup.string().required("This field is required"),
-   favoriteColor: Yup.string().required("This field is required"),
-   // city: Yup.string().required("This field is required"),
-});
