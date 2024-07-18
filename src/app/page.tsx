@@ -31,6 +31,7 @@ const Home = () => {
             schema={testFormSchema}
             initialValues={initialValues}
          />
+         <div>table</div>
       </div>
    );
 };

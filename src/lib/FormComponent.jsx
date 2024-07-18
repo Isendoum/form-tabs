@@ -1,5 +1,10 @@
 import React, { useEffect } from "react";
-import { useForm, FormProvider, Controller } from "react-hook-form";
+import {
+   useForm,
+   FormProvider,
+   Controller,
+   useFieldArray,
+} from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
    TextField,
@@ -292,13 +297,65 @@ const FormComponent = ({ schema, onSubmit, initialValues }) => {
       </Box>
    );
 
+   const renderFieldArray = (field) => {
+      const { fields, append, remove } = useFieldArray({
+         control,
+         name: field.name,
+      });
+
+      return (
+         <Box key={field.name} mb={4}>
+            <Typography variant="h6" gutterBottom>
+               {field.label}
+            </Typography>
+            {fields.map((item, index) => (
+               <Box key={index} mb={2} border={1} borderRadius={8} p={2}>
+                  <Grid container spacing={2}>
+                     {field.fields.map((subField, indexSub) => (
+                        <Grid item xs={12} sm={6} key={subField.name}>
+                           <Controller
+                              name={`${field.name}[${index}].${subField.name}${indexSub}`}
+                              control={control}
+                              defaultValue={item[subField.name] || ""}
+                              render={({ field: { onChange, value } }) =>
+                                 renderInput(subField, onChange, value)
+                              }
+                           />
+                        </Grid>
+                     ))}
+                     <Grid item xs={12} sm={6}>
+                        <div onClick={() => remove(index)}>-</div>
+                        {/* <IconButton
+                           onClick={() => remove(index)}
+                           color="secondary"
+                        >
+                           <RemoveIcon />
+                        </IconButton> */}
+                     </Grid>
+                  </Grid>
+               </Box>
+            ))}
+            <Button variant="outlined" onClick={() => append({})}>
+               + Add {field.label}
+            </Button>
+         </Box>
+      );
+   };
+
    return (
       <FormProvider {...methods}>
          <form onSubmit={handleSubmit(onSubmit)}>
             {schema.fields && schema.fields.length > 0 && (
                <Grid container spacing={2}>
                   {schema.fields.map((field, index) => {
-                     if (!isFieldVisible(field)) return null; // Conditionally render the entire Grid item
+                     if (field.type === "fieldArray") {
+                        return (
+                           <Grid item xs={12} key={index}>
+                              {renderFieldArray(field)}
+                           </Grid>
+                        );
+                     }
+                     if (!isFieldVisible(field)) return null;
                      return (
                         <Grid item xs={12} key={index}>
                            <Controller

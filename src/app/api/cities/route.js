@@ -11,6 +11,7 @@ export async function GET(req, res) {
    const cities = [
       { id: 1, name: "New York" },
       { id: 2, name: "Los Angeles" },
+      { id: 2, name: "Los Alamos" },
       { id: 3, name: "Chicago" },
       { id: 4, name: "Houston" },
       { id: 5, name: "Phoenix" },

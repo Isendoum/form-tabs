@@ -104,3 +104,20 @@ File
         name: (string) The name of the property.
         label: (string) The label shown on the field.
         validation: (Yup schema) Validation schema for the field.
+
+Form Sections
+
+    In order to create sections inside the form we can use this structure
+
+    {
+        title:"Section Title"
+        orientation: "vertical"/"horizontal"
+        columns: number of columns
+        rows:[
+                {
+                    fields:[
+                        array of fields
+                            ]
+                }
+             ]
+    }
