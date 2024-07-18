@@ -94,6 +94,8 @@ const FormComponent = ({ schema, onSubmit, initialValues }) => {
                      url={field.dynamicOptions.url}
                      validation={field.validation}
                      initialValue={initialValues[field.name]}
+                     optionValue={field.optionValue}
+                     optionLabel={field.optionLabel}
                   />
                );
             } else {

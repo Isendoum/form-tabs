@@ -17,6 +17,8 @@ const DynamicSelect = ({
    url,
    validation,
    initialValue,
+   optionValue,
+   optionLabel,
 }) => {
    const {
       control,
@@ -85,8 +87,8 @@ const DynamicSelect = ({
                      </MenuItem>
                   ) : (
                      options?.map((option, index) => (
-                        <MenuItem key={index} value={option.id}>
-                           {option.name}
+                        <MenuItem key={index} value={option?.[optionValue]}>
+                           {option?.[optionLabel]}
                         </MenuItem>
                      ))
                   )}

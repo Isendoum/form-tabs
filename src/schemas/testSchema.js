@@ -33,6 +33,8 @@ export const testFormSchema = {
       {
          name: "country",
          label: "Country",
+         optionValue: "id",
+         optionLabel: "name",
          type: "select",
          dynamicOptions: {
             url: "/api/countries",
@@ -44,6 +46,8 @@ export const testFormSchema = {
          name: "state",
          label: "State",
          type: "select",
+         optionValue: "id",
+         optionLabel: "name",
          dynamicOptions: {
             dependency: "country",
             url: "/api/states?country=:value",
@@ -67,6 +71,36 @@ export const testFormSchema = {
          optionValue: "id",
          optionLabel: "name",
          // validation: Yup.string().required("City is required"),
+      },
+      {
+         name: "bio",
+         label: "Bio",
+         type: "textarea",
+         validation: Yup.string(),
+      },
+      {
+         name: "dob",
+         label: "Date of Birth",
+         type: "date",
+         validation: Yup.date()
+            .typeError("Invalid date")
+            .nullable()
+            .required("Date of Birth is required"),
+      },
+      {
+         name: "subscribe",
+         label: "Subscribe to newsletter",
+         type: "checkbox",
+         validation: Yup.boolean(),
+      },
+      {
+         name: "terms",
+         label: "Accept Terms",
+         type: "switch",
+         required: true,
+         validation: Yup.boolean()
+            .oneOf([true], "You must accept the terms")
+            .required("Terms are required"),
       },
    ],
 };
