@@ -90,33 +90,13 @@ export const testFormSchema = {
          ],
          validation: Yup.array().of(
             Yup.object().shape({
+               state: Yup.string().required("State is required"),
                street: Yup.string().required("Street is required"),
                city: Yup.string().required("City is required"),
                zip: Yup.string().required("Zip Code is required"),
             }),
          ),
       },
-      // {
-      //    name: "state",
-      //    label: "State",
-      //    type: "select",
-      //    optionValue: "id",
-      //    optionLabel: "name",
-      //    dynamicOptions: {
-      //       dependency: "country",
-      //       url: "/api/states?country=:value",
-      //    },
-      //    required: true,
-      //    visibilityDependencies: [
-      //       { field: "country", value: 1 },
-      //       { field: "country", value: 2 },
-      //    ],
-      //    validation: Yup.string().when("country", {
-      //       is: (value) => value === "1" || value === "2",
-      //       then: (schema) => schema.required("State is required"),
-      //       otherwise: (schema) => schema.optional(),
-      //    }),
-      // },
       {
          name: "city",
          label: "City",
@@ -145,7 +125,9 @@ export const testFormSchema = {
          name: "subscribe",
          label: "Subscribe to newsletter",
          type: "checkbox",
-         validation: Yup.boolean(),
+         validation: Yup.boolean()
+            .oneOf([true], "You must subscribe to newsletter")
+            .required("Terms are required"),
       },
       {
          name: "terms",
