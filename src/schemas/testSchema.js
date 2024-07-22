@@ -53,6 +53,18 @@ export const testFormSchema = {
                type: "text",
                validation: Yup.string().required("Street is required"),
             },
+            // {
+            //    name: "country",
+            //    label: "Country",
+            //    optionValue: "id",
+            //    optionLabel: "name",
+            //    type: "select",
+            //    dynamicOptions: {
+            //       url: "/api/countries",
+            //    },
+            //    required: true,
+            //    validation: Yup.string().required("Country is required"),
+            // },
             {
                name: "state",
                label: "State",
@@ -75,6 +87,28 @@ export const testFormSchema = {
                }),
             },
 
+            // {
+            //    name: "state",
+            //    label: "State",
+            //    type: "select",
+            //    optionValue: "id",
+            //    optionLabel: "name",
+            //    dynamicOptions: {
+            //       dependency: "addresses.country",
+            //       url: "/api/states?country=:value",
+            //    },
+            //    required: true,
+            //    visibilityDependencies: [
+            //       { field: "addresses.country", value: 1 },
+            //       { field: "addresses.country", value: 2 },
+            //    ],
+            //    validation: Yup.string().when("country", {
+            //       is: (value) => value === "1" || value === "2",
+            //       then: (schema) => schema.required("State is required"),
+            //       otherwise: (schema) => schema.optional(),
+            //    }),
+            // },
+
             {
                name: "city",
                label: "City",
@@ -96,47 +130,6 @@ export const testFormSchema = {
                zip: Yup.string().required("Zip Code is required"),
             }),
          ),
-      },
-      {
-         name: "city",
-         label: "City",
-         type: "server-autocomplete",
-         url: "/api/cities?query=",
-         optionValue: "id",
-         optionLabel: "name",
-         // validation: Yup.string().required("City is required"),
-      },
-      {
-         name: "bio",
-         label: "Bio",
-         type: "textarea",
-         validation: Yup.string(),
-      },
-      {
-         name: "dob",
-         label: "Date of Birth",
-         type: "date",
-         validation: Yup.date()
-            .typeError("Invalid date")
-            .nullable()
-            .required("Date of Birth is required"),
-      },
-      {
-         name: "subscribe",
-         label: "Subscribe to newsletter",
-         type: "checkbox",
-         validation: Yup.boolean()
-            .oneOf([true], "You must subscribe to newsletter")
-            .required("Terms are required"),
-      },
-      {
-         name: "terms",
-         label: "Accept Terms",
-         type: "switch",
-         required: true,
-         validation: Yup.boolean()
-            .oneOf([true], "You must accept the terms")
-            .required("Terms are required"),
       },
    ],
 };
