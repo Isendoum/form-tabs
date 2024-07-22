@@ -110,8 +110,8 @@ export const renderInput = (
                <InputLabel>{field.label}</InputLabel>
                <Select value={value} onChange={onChange} label={field.label}>
                   {field.options.map((option, index) => (
-                     <MenuItem key={index} value={option.value}>
-                        {option.label}
+                     <MenuItem key={index} value={option[field.optionValue]}>
+                        {option[field.optionLabel]}
                      </MenuItem>
                   ))}
                </Select>

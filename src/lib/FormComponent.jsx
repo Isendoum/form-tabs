@@ -11,21 +11,30 @@ import {
    renderSection,
 } from "./utils/renderer";
 
-const FormComponent = ({ schema, onSubmit, initialValues }) => {
-   const validationSchema = generateValidationSchema(schema);
-   const methods = useForm({
-      defaultValues: initialValues,
-      resolver: yupResolver(validationSchema),
-   });
-   const {
-      control,
-      handleSubmit,
-      watch,
-      formState: { errors },
-      setValue,
-   } = methods;
+const FormComponent = ({
+   schema,
+   onSubmit,
+   initialValues,
+   methods,
+   watchFields,
+   handleSubmit,
+   control,
+   errors,
+}) => {
+   // const validationSchema = generateValidationSchema(schema);
+   // const methods = useForm({
+   //    defaultValues: initialValues,
+   //    resolver: yupResolver(validationSchema),
+   // });
+   // const {
+   //    control,
+   //    handleSubmit,
+   //    watch,
+   //    formState: { errors },
+   //    setValue,
+   // } = methods;
 
-   const watchFields = watch();
+   // const watchFields = watch();
 
    return (
       <FormProvider {...methods}>

@@ -30,18 +30,18 @@ export const testFormSchema = {
             otherwise: (schema) => schema.optional(),
          }),
       },
-      {
-         name: "country",
-         label: "Country",
-         optionValue: "id",
-         optionLabel: "name",
-         type: "select",
-         dynamicOptions: {
-            url: "/api/countries",
-         },
-         required: true,
-         validation: Yup.string().required("Country is required"),
-      },
+      // {
+      //    name: "country",
+      //    label: "Country",
+      //    optionValue: "id",
+      //    optionLabel: "name",
+      //    type: "select",
+      //    dynamicOptions: {
+      //       url: "/api/countries",
+      //    },
+      //    required: true,
+      //    validation: Yup.string().required("Country is required"),
+      // },
       {
          name: "addresses",
          label: "Addresses",
@@ -53,40 +53,18 @@ export const testFormSchema = {
                type: "text",
                validation: Yup.string().required("Street is required"),
             },
-            // {
-            //    name: "country",
-            //    label: "Country",
-            //    optionValue: "id",
-            //    optionLabel: "name",
-            //    type: "select",
-            //    dynamicOptions: {
-            //       url: "/api/countries",
-            //    },
-            //    required: true,
-            //    validation: Yup.string().required("Country is required"),
-            // },
             {
-               name: "state",
-               label: "State",
-               type: "select",
+               name: "country",
+               label: "Country",
                optionValue: "id",
                optionLabel: "name",
+               type: "select",
                dynamicOptions: {
-                  dependency: "country",
-                  url: "/api/states?country=:value",
+                  url: "/api/countries",
                },
                required: true,
-               visibilityDependencies: [
-                  { field: "country", value: 1 },
-                  { field: "country", value: 2 },
-               ],
-               validation: Yup.string().when("country", {
-                  is: (value) => value === "1" || value === "2",
-                  then: (schema) => schema.required("State is required"),
-                  otherwise: (schema) => schema.optional(),
-               }),
+               validation: Yup.string().required("Country is required"),
             },
-
             // {
             //    name: "state",
             //    label: "State",
@@ -94,13 +72,13 @@ export const testFormSchema = {
             //    optionValue: "id",
             //    optionLabel: "name",
             //    dynamicOptions: {
-            //       dependency: "addresses.country",
+            //       dependency: "country",
             //       url: "/api/states?country=:value",
             //    },
             //    required: true,
             //    visibilityDependencies: [
-            //       { field: "addresses.country", value: 1 },
-            //       { field: "addresses.country", value: 2 },
+            //       { field: "country", value: 1 },
+            //       { field: "country", value: 2 },
             //    ],
             //    validation: Yup.string().when("country", {
             //       is: (value) => value === "1" || value === "2",
@@ -108,6 +86,28 @@ export const testFormSchema = {
             //       otherwise: (schema) => schema.optional(),
             //    }),
             // },
+
+            {
+               name: "state",
+               label: "State",
+               type: "select",
+               optionValue: "id",
+               optionLabel: "name",
+               dynamicOptions: {
+                  dependency: "addresses.country",
+                  url: "/api/states?country=:value",
+               },
+               required: true,
+               visibilityDependencies: [
+                  { field: "addresses.country", value: 1 },
+                  { field: "addresses.country", value: 2 },
+               ],
+               validation: Yup.string().when("country", {
+                  is: (value) => value === "1" || value === "2",
+                  then: (schema) => schema.required("State is required"),
+                  otherwise: (schema) => schema.optional(),
+               }),
+            },
 
             {
                name: "city",
