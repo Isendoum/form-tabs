@@ -12,6 +12,7 @@ import { useFormContext, Controller } from "react-hook-form";
 
 const DynamicSelect = ({
    name,
+   index,
    label,
    dependency,
    url,
@@ -28,7 +29,26 @@ const DynamicSelect = ({
    } = useFormContext();
    const [options, setOptions] = useState([]);
    const [loading, setLoading] = useState(false);
-   const dependencyValue = dependency ? watch(dependency) : null;
+
+   // console.log(dependency); // Debug statement
+
+   // Handle nested dependency within fieldArray
+   const getDependencyValue = () => {
+      if (!dependency) return null;
+      const parts = dependency.split(".");
+      if (parts.length === 2 && index !== undefined) {
+         // Dependency within a fieldArray
+         const arrayName = parts[0];
+         const fieldName = parts[1];
+         const arrayValues = watch(arrayName);
+         return arrayValues?.[index]?.[fieldName];
+      } else {
+         // Regular dependency
+         return watch(dependency);
+      }
+   };
+
+   const dependencyValue = getDependencyValue();
 
    const fetchOptions = useCallback(
       debounce(async (value) => {
@@ -43,7 +63,7 @@ const DynamicSelect = ({
             console.error("Failed to fetch options:", error);
          }
          setLoading(false);
-      }, 1),
+      }, 300),
       [url],
    );
 
@@ -58,7 +78,7 @@ const DynamicSelect = ({
       } else {
          fetchOptions();
       }
-   }, [dependencyValue, fetchOptions, dependency, setValue, name]);
+   }, [dependencyValue, fetchOptions, setValue, name]);
 
    useEffect(() => {
       if (options.length > 0 && initialValue) {

@@ -28,11 +28,17 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import ServerAutocomplete from "../components/ServerAutocomplete";
 import DynamicSelect from "../components/DynamicSelect";
 
-export const isFieldVisible = (field, watchFields) => {
+export const isFieldVisible = (field, watchFields, index) => {
    if (!field.visibilityDependencies) return true;
-   return field.visibilityDependencies.some(
-      (dep) => watchFields[dep.field] === dep.value,
-   );
+   return field.visibilityDependencies.some((dep) => {
+      if (dep.field.includes(".") > 0) {
+         const prop1 = dep.field.split(".")[0];
+         const prop2 = dep.field.split(".")[1];
+         return watchFields[prop1][index][prop2] === dep.value;
+      } else {
+         return watchFields[dep.field] === dep.value;
+      }
+   });
 };
 
 export const renderInput = (
@@ -45,7 +51,7 @@ export const renderInput = (
    initialValues,
    watchFields,
 ) => {
-   if (!isFieldVisible(field, watchFields)) return null;
+   if (!isFieldVisible(field, watchFields, index)) return null;
 
    const fieldName = fieldArrayName
       ? `${fieldArrayName}.${index}.${field.name}`
@@ -86,6 +92,7 @@ export const renderInput = (
          return field.dynamicOptions ? (
             <DynamicSelect
                name={fieldName}
+               index={index}
                label={field.label}
                dependency={field.dynamicOptions.dependency}
                url={field.dynamicOptions.url}
