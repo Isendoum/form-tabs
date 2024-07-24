@@ -1,5 +1,6 @@
 "use client";
 
+import List from "@/components/lists/List";
 import FormComponent from "@/lib/FormComponent";
 import { generateValidationSchema } from "@/lib/utils/validation";
 import { smileSchema } from "@/schemas/smileSchema";
@@ -48,7 +49,9 @@ const Home = () => {
       (async () => {
          if (watchEntityName && watchActivity) {
             try {
-               const res = await fetch("/api/material");
+               const res = await fetch(
+                  `/api/material?entity_id=${watchEntityName?.value}&activity_id=${watchActivity?.value}`,
+               );
                const data = await res.json();
                setMaterialData(data.data);
             } catch (e) {}
@@ -60,8 +63,8 @@ const Home = () => {
 
    return (
       <div className="container mx-auto p-4">
-         <div className="flex flex-col">
-            <div>
+         <div className="flex flex-row gap-2">
+            <div className="w-[50%]">
                <FormComponent
                   methods={methods}
                   onSubmit={handleFormSubmit}
@@ -73,11 +76,8 @@ const Home = () => {
                   errors={errors}
                />
             </div>
-            <div>
-               List
-               {materialData.map((obj) => (
-                  <div>{obj.materialName}</div>
-               ))}
+            <div className="w-[50%] border border-gray-300">
+               <List data={materialData} />
             </div>
          </div>
          <div>table</div>
