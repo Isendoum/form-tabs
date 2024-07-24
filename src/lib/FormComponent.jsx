@@ -20,6 +20,8 @@ const FormComponent = ({
    handleSubmit,
    control,
    errors,
+   formName,
+   hideSubmit,
 }) => {
    // const validationSchema = generateValidationSchema(schema);
    // const methods = useForm({
@@ -38,7 +40,7 @@ const FormComponent = ({
 
    return (
       <FormProvider {...methods}>
-         <form onSubmit={handleSubmit(onSubmit)}>
+         <form onSubmit={handleSubmit(onSubmit)} id={formName}>
             {schema.fields && schema.fields.length > 0 && (
                <Grid container spacing={2}>
                   {schema.fields.map((field, index) => {
@@ -89,11 +91,13 @@ const FormComponent = ({
             {schema?.sections &&
                schema?.sections.map((section) => renderSection(section))}
 
-            <Grid item xs={12} className="mt-4 float-right">
-               <Button type="submit" variant="contained" color="primary">
-                  Submit
-               </Button>
-            </Grid>
+            {!hideSubmit && (
+               <Grid item xs={12} className="mt-4 float-right">
+                  <Button type="submit" variant="contained" color="primary">
+                     Submit
+                  </Button>
+               </Grid>
+            )}
          </form>
       </FormProvider>
    );

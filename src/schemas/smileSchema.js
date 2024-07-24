@@ -1,3 +1,7 @@
+import { getActivity } from "@/app/api/activities/route";
+import { getCustomer } from "@/app/api/customer/route";
+import { getEntities } from "@/app/api/entities/route";
+import { getTransactionType } from "@/app/api/transaction/route";
 import * as Yup from "yup";
 
 // Define a schema with both sections and simple fields
@@ -5,36 +9,83 @@ import * as Yup from "yup";
 export const smileSchema = {
    fields: [
       {
-         name: "entityName",
+         name: "entityId",
          label: "Enity name",
          type: "server-autocomplete",
-         url: "/api/entities?keyword=",
          optionValue: "id",
          optionLabel: "name",
          required: true,
-         validation: Yup.string().required("First Name is required"),
+         validation: Yup.string().required("Entity name is required"),
+         fetchOptions: getEntities
       },
 
       {
          name: "transactionType",
          label: "Transaction Type",
-         type: "select",
+         type: "select-fetch",
+         optionValue: "id",
+         optionLabel: "title",
+         required: true,
+         validation: Yup.string().required("Transaction type is required"),
+         fetchOptions: getTransactionType,
+      },
+      {
+         name: "customer",
+         label: "Customer",
+         type: "select-fetch",
          optionValue: "id",
          optionLabel: "name",
          required: true,
-         options: [{ id: 1, name: "Add Stock" }],
-         validation: Yup.string().required("Last Name is required"),
+         visibilityDependencies: [
+            { field: "transactionType", value: 2 },
+         ],
+         validation: Yup.string().required("Customer is required"),
+         fetchOptions: getCustomer,
+         fetchDepedency: 'entityId'
+      },
+      {
+         name: "customer",
+         label: "Customer",
+         type: "select-fetch",
+         optionValue: "id",
+         optionLabel: "name",
+         required: true,
+         visibilityDependencies: [
+            { field: "transactionType", value: 5 },
+         ],
+         validation: Yup.string().required("Customer is required"),
+         fetchOptions: getCustomer,
+         fetchDepedency: 'entityId'
       },
       {
          name: "activity",
          label: "Activity",
-         type: "text",
          type: "server-autocomplete",
-         url: "/api/activities?keyword=",
          optionValue: "id",
          optionLabel: "name",
          required: true,
-         validation: Yup.string().required("First Name is required"),
+         validation: Yup.string().required("Activity is required"),
+         fetchOptions: getActivity
+      },
+      {
+         name: "spendingDate",
+         label: "Spending Date",
+         type: "date",
+         required: true,
+         visibilityDependencies: [
+            { field: "transactionType", value: 2 },
+         ],
+         validation: Yup.string().required("Spending Date is required"),
+      },
+      {
+         name: "returnDate",
+         label: "Return Date",
+         type: "date",
+         required: true,
+         visibilityDependencies: [
+            { field: "transactionType", value: 5 },
+         ],
+         validation: Yup.string().required("Return Date is required"),
       },
       // {
       //    name: "country",
