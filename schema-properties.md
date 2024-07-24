@@ -121,3 +121,8 @@ Form Sections
                 }
              ]
     }
+
+Field Array dependencies
+
+    If a field in a fieldArray has dependency inside the fieldArray
+    we declare the dependency like this `fieldArrayName.fieldName`
