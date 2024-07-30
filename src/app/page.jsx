@@ -7,12 +7,19 @@ import { smileSchema } from "@/schemas/smileSchema";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { getMaterial } from "./api/material/route";
+import { Button, Grid } from "@mui/material";
+import TableTransaction from "@/lib/TableTransaction";
+import { schemaTable } from "@/schemas/transactionTableSchema";
 // const fetcher = (url) => fetch(url).then((res) => res.json());
+
+const formName = "basicForm";
 
 const Home = () => {
    const [initialValues, setInitialValues] = useState({});
    const validationSchema = generateValidationSchema(smileSchema);
    const [materialData, setMaterialData] = useState([]);
+   const [selectedMaterial, setSelectedMaterial] = useState([]);
    const methods = useForm({
       defaultValues: initialValues,
       resolver: yupResolver(validationSchema),
@@ -26,7 +33,7 @@ const Home = () => {
    } = methods;
 
    const watchFields = watch();
-   const watchEntityName = watch("entityName");
+   const watchEntityId = watch("entityId");
    const watchActivity = watch("activity");
    // submit for react hook forms
    const handleFormSubmit = (data) => {
@@ -45,9 +52,18 @@ const Home = () => {
       alert(formDataString);
    };
 
+   const handleSelectedRow = (row) =>
+      setSelectedMaterial((prev) => [...prev, row]);
+   const handleDeleteRow = (index) => {
+      const newSelectedMaterial = [...selectedMaterial];
+      newSelectedMaterial.splice(index, 1);
+
+      setSelectedMaterial(newSelectedMaterial);
+   };
+
    useEffect(() => {
       (async () => {
-         if (watchEntityName && watchActivity) {
+         if (watchEntityId && watchActivity) {
             try {
                const res = await fetch(
                   `/api/material?entity_id=${watchEntityName?.value}&activity_id=${watchActivity?.value}`,
@@ -57,9 +73,7 @@ const Home = () => {
             } catch (e) {}
          }
       })();
-
-      console.log(watchEntityName, watchActivity);
-   }, [watchEntityName, watchActivity]);
+   }, [watchEntityId, watchActivity]);
 
    return (
       <div className="container mx-auto p-4">
@@ -74,13 +88,32 @@ const Home = () => {
                   initialValues={initialValues}
                   control={control}
                   errors={errors}
+                  hideSubmit
+                  formName={formName}
                />
             </div>
             <div className="w-[50%] border border-gray-300">
                <List data={materialData} />
             </div>
          </div>
-         <div>table</div>
+         <div className="flex flex-col border mt-2 p-4">
+            <h6>Table Transaction</h6>
+            <TableTransaction
+               data={selectedMaterial}
+               handleDeleteRow={handleDeleteRow}
+               schema={schemaTable}
+            />
+         </div>
+         <div className="flex justify-end mt-2 p-4">
+            <Button
+               form={formName}
+               type="submit"
+               variant="contained"
+               color="primary"
+            >
+               Submit
+            </Button>
+         </div>
       </div>
    );
 };
