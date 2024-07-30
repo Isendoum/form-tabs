@@ -1,6 +1,6 @@
 "use client";
 
-import TableMaterial from "@/lib/TableMaterial";
+import List from "@/components/lists/List";
 import FormComponent from "@/lib/FormComponent";
 import { generateValidationSchema } from "@/lib/utils/validation";
 import { smileSchema } from "@/schemas/smileSchema";
@@ -13,7 +13,7 @@ import TableTransaction from "@/lib/TableTransaction";
 import { schemaTable } from "@/schemas/transactionTableSchema";
 // const fetcher = (url) => fetch(url).then((res) => res.json());
 
-const formName = 'basicForm';
+const formName = "basicForm";
 
 const Home = () => {
    const [initialValues, setInitialValues] = useState({});
@@ -52,31 +52,33 @@ const Home = () => {
       alert(formDataString);
    };
 
-   const handleSelectedRow = (row) => setSelectedMaterial(prev => [...prev, row]);
+   const handleSelectedRow = (row) =>
+      setSelectedMaterial((prev) => [...prev, row]);
    const handleDeleteRow = (index) => {
       const newSelectedMaterial = [...selectedMaterial];
       newSelectedMaterial.splice(index, 1);
 
       setSelectedMaterial(newSelectedMaterial);
-   }
+   };
 
    useEffect(() => {
       (async () => {
          if (watchEntityId && watchActivity) {
             try {
-               const params = { entity_id: watchEntityId.value, activity_id: watchActivity.value };
-
-               const res = await getMaterial(params);
-               setMaterialData(res);
-            } catch (e) { }
+               const res = await fetch(
+                  `/api/material?entity_id=${watchEntityName?.value}&activity_id=${watchActivity?.value}`,
+               );
+               const data = await res.json();
+               setMaterialData(data.data);
+            } catch (e) {}
          }
       })();
    }, [watchEntityId, watchActivity]);
 
    return (
       <div className="container mx-auto p-4">
-         <div className="flex gap-2">
-            <div className="flex-1 p-4 border">
+         <div className="flex flex-row gap-2">
+            <div className="w-[50%]">
                <FormComponent
                   methods={methods}
                   onSubmit={handleFormSubmit}
@@ -90,10 +92,8 @@ const Home = () => {
                   formName={formName}
                />
             </div>
-            <div className="flex-1 p-4 border">
-               <h6>Material</h6>
-               {materialData.length === 0 ? <p>Please choose entity and transaction type first</p> : <p>Click on the table column to select the material</p>}
-               {materialData.length > 0 && watchEntityId && watchActivity && <TableMaterial data={materialData.filter(x => !selectedMaterial.some(y => y.id === x.id))} handleSelectedRow={handleSelectedRow} />}
+            <div className="w-[50%] border border-gray-300">
+               <List data={materialData} />
             </div>
          </div>
          <div className="flex flex-col border mt-2 p-4">
@@ -105,7 +105,12 @@ const Home = () => {
             />
          </div>
          <div className="flex justify-end mt-2 p-4">
-            <Button form={formName} type="submit" variant="contained" color="primary">
+            <Button
+               form={formName}
+               type="submit"
+               variant="contained"
+               color="primary"
+            >
                Submit
             </Button>
          </div>
