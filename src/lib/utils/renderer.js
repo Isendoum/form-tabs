@@ -27,6 +27,7 @@ import RemoveIcon from "@mui/icons-material/Remove";
 
 import ServerAutocomplete from "../components/ServerAutocomplete";
 import DynamicSelect from "../components/DynamicSelect";
+import SelectFetch from "../components/SelectFetch";
 
 export const isFieldVisible = (field, watchFields, index) => {
    if (!field.visibilityDependencies) return true;
@@ -228,6 +229,19 @@ export const renderInput = (
                />
             </Button>
          );
+      case 'select-fetch':
+         return (
+            <SelectFetch
+               name={fieldName}
+               label={field.label}
+               optionValue={field.optionValue}
+               optionLabel={field.optionLabel}
+               fetchOptions={field.fetchOptions}
+               value={value}
+               onChange={onChange}
+               fetchDepedency={field.fetchDepedency}
+            />
+         )
       default:
          return null;
    }

@@ -22,13 +22,17 @@ const ServerAutocomplete = ({
    const debouncedFetchOptions = useCallback(
       debounce(async (input) => {
          setLoading(true);
-         const res = await fetch(`${url}${input}`);
-         const data = await res.json();
-         const mappedData = data.data.map((obj) => ({
+         // const res = await fetch(`${url}${input}`);
+         // const data = await res.json();
+         const data = await fetchOptions(input);
+         const mappedData = data?.map((obj) => ({
             name: obj?.[optionLabel],
             value: obj?.[optionValue],
          }));
-         setOptions(mappedData);
+         if (mappedData) {
+            setOptions(mappedData);
+         }
+
          setLoading(false);
       }, 300),
       [fetchOptions],
