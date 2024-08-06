@@ -1,7 +1,10 @@
-import { getActivity } from "@/app/api/activities/route";
-import { getCustomer } from "@/app/api/customer/route";
-import { getEntities } from "@/app/api/entities/route";
-import { getTransactionType } from "@/app/api/transaction/route";
+import {
+   getActivity,
+   getCustomer,
+   getEntities,
+   getTransactionType,
+} from "@/services/services";
+
 import * as Yup from "yup";
 
 // Define a schema with both sections and simple fields
@@ -16,7 +19,7 @@ export const smileSchema = {
          optionLabel: "name",
          required: true,
          validation: Yup.string().required("Entity name is required"),
-         fetchOptions: getEntities
+         fetchOptions: () => [{ id: 1, name: "test 1" }],
       },
 
       {
@@ -27,7 +30,7 @@ export const smileSchema = {
          optionLabel: "title",
          required: true,
          validation: Yup.string().required("Transaction type is required"),
-         fetchOptions: getTransactionType,
+         fetchOptions: () => [{ id: 1, title: "test 1" }],
       },
       {
          name: "customer",
@@ -36,12 +39,10 @@ export const smileSchema = {
          optionValue: "id",
          optionLabel: "name",
          required: true,
-         visibilityDependencies: [
-            { field: "transactionType", value: 2 },
-         ],
+         visibilityDependencies: [{ field: "transactionType", value: 2 }],
          validation: Yup.string().required("Customer is required"),
          fetchOptions: getCustomer,
-         fetchDepedency: 'entityId'
+         fetchDepedency: "entityId",
       },
       {
          name: "customer",
@@ -50,12 +51,10 @@ export const smileSchema = {
          optionValue: "id",
          optionLabel: "name",
          required: true,
-         visibilityDependencies: [
-            { field: "transactionType", value: 5 },
-         ],
+         visibilityDependencies: [{ field: "transactionType", value: 5 }],
          validation: Yup.string().required("Customer is required"),
          fetchOptions: getCustomer,
-         fetchDepedency: 'entityId'
+         fetchDepedency: "entityId",
       },
       {
          name: "activity",
@@ -65,16 +64,14 @@ export const smileSchema = {
          optionLabel: "name",
          required: true,
          validation: Yup.string().required("Activity is required"),
-         fetchOptions: getActivity
+         fetchOptions: () => [{ id: 1, name: "test 1" }],
       },
       {
          name: "spendingDate",
          label: "Spending Date",
          type: "date",
          required: true,
-         visibilityDependencies: [
-            { field: "transactionType", value: 2 },
-         ],
+         visibilityDependencies: [{ field: "transactionType", value: 2 }],
          validation: Yup.string().required("Spending Date is required"),
       },
       {
@@ -82,9 +79,7 @@ export const smileSchema = {
          label: "Return Date",
          type: "date",
          required: true,
-         visibilityDependencies: [
-            { field: "transactionType", value: 5 },
-         ],
+         visibilityDependencies: [{ field: "transactionType", value: 5 }],
          validation: Yup.string().required("Return Date is required"),
       },
       // {

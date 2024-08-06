@@ -27,11 +27,11 @@ const Home = () => {
 
    return (
       <div className="container mx-auto p-4">
-         <FormComponent
+         {/* <FormComponent
             onSubmit={handleFormSubmit}
             schema={formSchema}
             initialValues={initialValues}
-         />
+         /> */}
       </div>
    );
 };

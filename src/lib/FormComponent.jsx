@@ -23,6 +23,7 @@ const FormComponent = ({
    formName,
    hideSubmit,
 }) => {
+   console.log("Rendering FormComponent");
    // const validationSchema = generateValidationSchema(schema);
    // const methods = useForm({
    //    defaultValues: initialValues,

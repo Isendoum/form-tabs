@@ -7,6 +7,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 
 const TableTransaction = ({ data = [], handleDeleteRow, schema }) => {
+   console.log("Rendering TableTransaction");
    return (
       <TableContainer component={Paper}>
          <Table aria-label="table material">

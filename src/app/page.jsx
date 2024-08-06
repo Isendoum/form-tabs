@@ -5,23 +5,43 @@ import FormComponent from "@/lib/FormComponent";
 import { generateValidationSchema } from "@/lib/utils/validation";
 import { smileSchema } from "@/schemas/smileSchema";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { getMaterial } from "./api/material/route";
-import { Button, Grid } from "@mui/material";
 import TableTransaction from "@/lib/TableTransaction";
 import { schemaTable } from "@/schemas/transactionTableSchema";
-// const fetcher = (url) => fetch(url).then((res) => res.json());
+import { effect, signal } from "@preact/signals-react";
+import { useSignals } from "@preact/signals-react/runtime";
 
 const formName = "basicForm";
 
+const initialValuesSignal = signal({});
+const materialDataSignal = signal([]);
+const selectedMaterialSignal = signal([]);
+const watchFieldsIdSignal = signal(null);
+const watchEntityIdSignal = signal(null);
+const watchActivitySignal = signal(null);
+
+effect(() => {
+   (async () => {
+      if (watchEntityIdSignal.value && watchActivitySignal.value) {
+         try {
+            materialDataSignal.value = [
+               { id: 1, materialName: "Test 1", availableStock: 200 },
+               { id: 2, materialName: "Test 2", availableStock: 300 },
+            ];
+         } catch (e) {}
+      } else {
+         materialDataSignal.value = [];
+         selectedMaterialSignal.value = [];
+      }
+   })();
+});
+
 const Home = () => {
-   const [initialValues, setInitialValues] = useState({});
+   useSignals();
    const validationSchema = generateValidationSchema(smileSchema);
-   const [materialData, setMaterialData] = useState([]);
-   const [selectedMaterial, setSelectedMaterial] = useState([]);
+
    const methods = useForm({
-      defaultValues: initialValues,
+      defaultValues: initialValuesSignal.value,
       resolver: yupResolver(validationSchema),
    });
    const {
@@ -32,48 +52,35 @@ const Home = () => {
       setValue,
    } = methods;
 
-   const watchFields = watch();
-   const watchEntityId = watch("entityId");
-   const watchActivity = watch("activity");
-   // submit for react hook forms
+   watchFieldsIdSignal.value = watch();
+   watchEntityIdSignal.value = watch("entityId");
+   watchActivitySignal.value = watch("activity");
+
    const handleFormSubmit = (data) => {
       const formData = new FormData();
       formData.append("Picture", data.profilePicture);
       formData.append("Rest", JSON.stringify(data, null, 2));
 
-      // Construct a string representation of formData
       const formDataEntries = [];
       formData.forEach((value, key) => {
          formDataEntries.push(`${key}: ${value}`);
       });
       const formDataString = formDataEntries.join("\n");
-
-      console.log(formData);
       alert(formDataString);
    };
 
-   const handleSelectedRow = (row) =>
-      setSelectedMaterial((prev) => [...prev, row]);
-   const handleDeleteRow = (index) => {
-      const newSelectedMaterial = [...selectedMaterial];
-      newSelectedMaterial.splice(index, 1);
-
-      setSelectedMaterial(newSelectedMaterial);
+   const handleSelectedRow = (row) => {
+      selectedMaterialSignal.value = [
+         { id: 1, material: { name: "Test 1", code: 1 } },
+         { id: 2, material: { name: "Test 2", code: 2 } },
+      ].filter((obj) => row.materialName === obj.material.name);
    };
 
-   useEffect(() => {
-      (async () => {
-         if (watchEntityId && watchActivity) {
-            try {
-               const res = await fetch(
-                  `/api/material?entity_id=${watchEntityName?.value}&activity_id=${watchActivity?.value}`,
-               );
-               const data = await res.json();
-               setMaterialData(data.data);
-            } catch (e) {}
-         }
-      })();
-   }, [watchEntityId, watchActivity]);
+   const handleDeleteRow = (index) => {
+      const newSelectedMaterial = [...selectedMaterialSignal.value];
+      newSelectedMaterial.splice(index, 1);
+      selectedMaterialSignal.value = newSelectedMaterial;
+   };
 
    return (
       <div className="container mx-auto p-4">
@@ -84,8 +91,8 @@ const Home = () => {
                   onSubmit={handleFormSubmit}
                   handleSubmit={handleSubmit}
                   schema={smileSchema}
-                  watchFields={watchFields}
-                  initialValues={initialValues}
+                  watchFields={watchFieldsIdSignal.value}
+                  initialValues={initialValuesSignal.value}
                   control={control}
                   errors={errors}
                   hideSubmit
@@ -93,27 +100,22 @@ const Home = () => {
                />
             </div>
             <div className="w-[50%] border border-gray-300">
-               <List data={materialData} />
+               <List
+                  data={materialDataSignal.value}
+                  handleSelectedRow={handleSelectedRow}
+               />
             </div>
          </div>
-         <div className="flex flex-col border mt-2 p-4">
-            <h6>Table Transaction</h6>
-            <TableTransaction
-               data={selectedMaterial}
-               handleDeleteRow={handleDeleteRow}
-               schema={schemaTable}
-            />
-         </div>
-         <div className="flex justify-end mt-2 p-4">
-            <Button
-               form={formName}
-               type="submit"
-               variant="contained"
-               color="primary"
-            >
-               Submit
-            </Button>
-         </div>
+         {selectedMaterialSignal.value.length > 0 && (
+            <div className="flex flex-col border mt-2 p-4">
+               <h6>Table Transaction</h6>
+               <TableTransaction
+                  data={selectedMaterialSignal.value}
+                  handleDeleteRow={handleDeleteRow}
+                  schema={schemaTable}
+               />
+            </div>
+         )}
       </div>
    );
 };

@@ -1,81 +1,91 @@
 import React, { useEffect, useState, useCallback } from "react";
 import {
-    FormControl,
-    InputLabel,
-    Select,
-    MenuItem,
-    FormHelperText,
-    CircularProgress,
-    debounce,
+   FormControl,
+   InputLabel,
+   Select,
+   MenuItem,
+   FormHelperText,
+   CircularProgress,
+   debounce,
 } from "@mui/material";
 import { useFormContext, Controller } from "react-hook-form";
+import { effect, signal, useSignalEffect } from "@preact/signals-react";
+import { useSignals } from "@preact/signals-react/runtime";
+
+const formContextSignal = signal(() => useFormContext());
+const optionsSignal = signal([]);
+const dependencySignal = signal(null);
+const loadingSignal = signal(false);
+const fetchOptionsSignal = signal(null);
+const optionLabelSignal = signal("");
+const optionValueSignal = signal("");
+
+effect(async () => {
+   loadingSignal.value = true;
+   try {
+      let data = [];
+
+      if (dependencySignal.value) {
+         const fieldfetchDepedency = formContextSignal
+            .value()
+            .watch(dependencySignal.value);
+         data = await fetchOptionsSignal.value(fieldfetchDepedency.value);
+      } else {
+         data = await fetchOptionsSignal.value();
+      }
+      const mappedData = data.map((obj) => ({
+         name: obj?.[optionLabelSignal],
+         value: obj?.[optionValueSignal],
+      }));
+      optionsSignal.value = mappedData;
+      // setOptions(mappedData);
+   } catch (error) {
+      console.error("Failed to fetch options:", error);
+   }
+   loadingSignal.value = false;
+});
 
 const SelectFetch = ({
-    name,
-    label,
-    optionValue,
-    optionLabel,
-    fetchOptions,
-    value,
-    onChange,
-    fetchDepedency,
+   name,
+   label,
+   optionValue,
+   optionLabel,
+   fetchOptions,
+   value,
+   onChange,
+   fetchDepedency,
 }) => {
-    const {
-        formState: { errors },
-        watch,
-    } = useFormContext();
-    const [options, setOptions] = useState([]);
-    const [loading, setLoading] = useState(false);
+   useSignals();
+   optionValueSignal.value = optionValue;
+   optionLabelSignal.value = optionLabel;
+   dependencySignal.value = fetchDepedency;
+   fetchOptionsSignal.value = fetchOptions;
 
-    const CallbackfetchOptions = useCallback(async () => {
-        setLoading(true);
-        try {
-            let data = [];
-
-            if (fetchDepedency) {
-                const fieldfetchDepedency = watch(fetchDepedency);
-                data = await fetchOptions(fieldfetchDepedency.value);
-            }
-            else data = await fetchOptions();
-
-            const mappedData = data.map((obj) => ({
-                name: obj?.[optionLabel],
-                value: obj?.[optionValue],
-            }));
-            setOptions(mappedData);
-        } catch (error) {
-            console.error("Failed to fetch options:", error);
-        }
-        setLoading(false);
-    }, [fetchOptions]);
-
-    useEffect(() => {
-        CallbackfetchOptions();
-    }, [fetchDepedency]);
-
-    return (
-        <FormControl
-            variant="outlined"
-            fullWidth
-            error={!!errors[name]}
-        >
-            <InputLabel>{label}</InputLabel>
-            <Select value={value} onChange={onChange} label={label}>
-                {loading ? (
-                    <MenuItem disabled>
-                        <CircularProgress size={24} />
-                    </MenuItem>
-                ) : (
-                    options.map((option, index) => (
-                        <MenuItem key={index} value={option.value}>
-                            {option.name}
-                        </MenuItem>
-                    ))
-                )}
-            </Select>
-            <FormHelperText>{errors[name]?.message}</FormHelperText>
-        </FormControl>
-    )
-}
+   return (
+      <FormControl
+         variant="outlined"
+         fullWidth
+         error={!!formContextSignal.value().formState.errors[name]}
+      >
+         <InputLabel>{label}</InputLabel>
+         <Select value={value} onChange={onChange} label={label}>
+            {loadingSignal.value ? (
+               <MenuItem disabled>
+                  <CircularProgress size={24} />
+               </MenuItem>
+            ) : (
+               optionsSignal.value.map((option, index) => (
+                  <MenuItem key={index} value={option.value}>
+                     {option.name}
+                  </MenuItem>
+               ))
+            )}
+         </Select>
+         <FormHelperText>
+            {formContextSignal.value().formState.errors[name]?.message}
+         </FormHelperText>
+      </FormControl>
+   );
+};
 
 export default SelectFetch;

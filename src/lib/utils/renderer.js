@@ -229,7 +229,7 @@ export const renderInput = (
                />
             </Button>
          );
-      case 'select-fetch':
+      case "select-fetch":
          return (
             <SelectFetch
                name={fieldName}
@@ -241,7 +241,7 @@ export const renderInput = (
                onChange={onChange}
                fetchDepedency={field.fetchDepedency}
             />
-         )
+         );
       default:
          return null;
    }
