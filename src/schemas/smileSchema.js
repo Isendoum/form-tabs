@@ -1,10 +1,7 @@
-import {
-   getActivity,
-   getCustomer,
-   getEntities,
-   getTransactionType,
-} from "@/services/services";
-
+import { getActivity } from "@/services/activitiesService";
+import { getCustomer } from "@/services/customerService";
+import { getEntities } from "@/services/entitiesService";
+import { getTransactionType } from "@/services/transactionService";
 import * as Yup from "yup";
 
 // Define a schema with both sections and simple fields
