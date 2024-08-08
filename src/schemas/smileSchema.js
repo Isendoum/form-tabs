@@ -6,6 +6,18 @@ import * as Yup from "yup";
 
 // Define a schema with both sections and simple fields
 // Updated configuration with validation schemas
+
+export const updateSmileSchema = {
+   fields: [
+      {
+         name: "activity",
+         label: "Activity",
+         type: "text",
+         validation: Yup.string().required("Activity is required"),
+      },
+   ],
+};
+
 export const smileSchema = {
    fields: [
       {
@@ -16,7 +28,11 @@ export const smileSchema = {
          optionLabel: "name",
          required: true,
          validation: Yup.string().required("Entity name is required"),
-         fetchOptions: getEntities,
+         // fetchOptions: getEntities,
+         fetchOptions: () => [
+            { id: 1, name: "Test 1" },
+            { id: 2, name: "Test 2" },
+         ],
       },
 
       {
@@ -27,7 +43,11 @@ export const smileSchema = {
          optionLabel: "title",
          required: true,
          validation: Yup.string().required("Transaction type is required"),
-         fetchOptions: getTransactionType,
+         fetchOptions: () => [
+            { id: 1, title: "Test 1" },
+            { id: 2, title: "Test 2" },
+         ],
+         // fetchOptions: getTransactionType,
       },
       {
          name: "customer",
@@ -61,7 +81,11 @@ export const smileSchema = {
          optionLabel: "name",
          required: true,
          validation: Yup.string().required("Activity is required"),
-         fetchOptions: getActivity,
+         // fetchOptions: getActivity,
+         fetchOptions: () => [
+            { id: 1, name: "Test 1" },
+            { id: 2, name: "Test 2" },
+         ],
       },
       {
          name: "spendingDate",

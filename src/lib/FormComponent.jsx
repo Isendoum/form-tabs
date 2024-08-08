@@ -23,24 +23,12 @@ const FormComponent = ({
    formName,
    hideSubmit,
 }) => {
-   // const validationSchema = generateValidationSchema(schema);
-   // const methods = useForm({
-   //    defaultValues: initialValues,
-   //    resolver: yupResolver(validationSchema),
-   // });
-   // const {
-   //    control,
-   //    handleSubmit,
-   //    watch,
-   //    formState: { errors },
-   //    setValue,
-   // } = methods;
-
-   // const watchFields = watch();
-
    return (
       <FormProvider {...methods}>
-         <form onSubmit={handleSubmit(onSubmit)} id={formName}>
+         <form
+            onSubmit={handleSubmit && onSubmit ? handleSubmit(onSubmit) : null}
+            id={formName}
+         >
             {schema.fields && schema.fields.length > 0 && (
                <Grid container spacing={2}>
                   {schema.fields.map((field, index) => {
